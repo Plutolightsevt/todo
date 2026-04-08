@@ -40,24 +40,45 @@
             z-index: 2;
         }
 
-        .security-banner {
-            background: #fef7e0;
-            border-left: 6px solid #f5b042;
-            padding: 10px 20px;
-            border-radius: 20px;
+        /* 手机通知引导卡片 */
+        .mobile-guide {
+            background: linear-gradient(135deg, #e8f0fe, #d9e8f5);
+            border-radius: 24px;
+            padding: 16px 20px;
             margin-bottom: 20px;
-            font-size: 0.8rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-        .security-banner code {
-            background: #fff1d6;
-            padding: 4px 10px;
-            border-radius: 30px;
-            font-family: monospace;
+        .guide-text {
+            flex: 1;
+            font-size: 0.85rem;
+            color: #1a4c6e;
+        }
+        .guide-text strong {
+            color: #2c7cb6;
+        }
+        .test-notify-btn {
+            background: #2c7cb6;
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .add-to-home {
+            background: #f0f4fa;
+            border-radius: 40px;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .dashboard {
@@ -307,8 +328,6 @@
             color: #c06a42;
             border-bottom: 1px dashed #ffe0c4;
         }
-
-        /* ========= 周期规则列表样式：强制一行，分割线 ========= */
         .rules-container {
             padding: 1.2rem 1.5rem;
             flex: 1;
@@ -318,10 +337,9 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 0;
-            border-bottom: 1px solid #e9edf2;  /* 分割线 */
+            border-bottom: 1px solid #e9edf2;
             gap: 12px;
         }
-        /* 规则信息容器：强制一行，允许滚动 */
         .rule-info {
             display: flex;
             flex-wrap: nowrap;
@@ -332,22 +350,12 @@
             scrollbar-width: thin;
             flex: 1;
         }
-        .rule-info::-webkit-scrollbar {
-            height: 4px;
-        }
         .rule-badge {
             background: #eef3fc;
             border-radius: 40px;
             padding: 4px 12px;
             font-size: 0.75rem;
             white-space: nowrap;
-            flex-shrink: 0;
-        }
-        .rule-info strong {
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-        .rule-info span:first-child {
             flex-shrink: 0;
         }
         .del-rule-btn {
@@ -357,11 +365,6 @@
             cursor: pointer;
             color: #b0c4de;
             flex-shrink: 0;
-            margin-left: 8px;
-            transition: 0.2s;
-        }
-        .del-rule-btn:hover {
-            color: #e0675c;
         }
         .add-rule-btn {
             background: #eef3fc;
@@ -373,13 +376,6 @@
             margin-top: 20px;
             width: 100%;
         }
-        .empty-rules {
-            text-align: center;
-            padding: 2rem;
-            color: #9fb8cf;
-        }
-
-        /* 待办卡片通用样式 */
         .todo-item, .overdue-item {
             display: flex;
             align-items: center;
@@ -398,6 +394,17 @@
         .todo-icon { font-size: 1.2rem; min-width: 28px; text-align: center; }
         .todo-text { flex: 2; font-size: 0.92rem; word-break: break-word; }
         .completed .todo-text { text-decoration: line-through; color: #8aaac7; }
+        .progress-badge {
+            background: #f0f4fa;
+            border-radius: 30px;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #4a6f8f;
+        }
         .completion-badge, .reminder-badge {
             font-size: 0.65rem;
             background: #eef3fc;
@@ -436,11 +443,37 @@
         .modal-content {
             background: white;
             border-radius: 2rem;
-            max-width: 800px;
+            max-width: 500px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 70vh;
             overflow-y: auto;
             padding: 1.5rem;
+        }
+        .progress-log-list {
+            margin: 1rem 0;
+            max-height: 300px;
+            overflow-y: auto;
+            border-top: 1px solid #eef2f8;
+        }
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f4fa;
+            font-size: 0.8rem;
+        }
+        .log-time {
+            color: #7a9cbb;
+            font-size: 0.7rem;
+        }
+        .add-progress {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .add-progress input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 40px;
+            border: 1px solid #e2edf6;
         }
         .history-table {
             width: 100%;
@@ -468,25 +501,21 @@
         @media (max-width: 780px) {
             .add-row { flex-direction: column; align-items: stretch; }
             .rule-info { gap: 8px; }
-            .rule-badge { font-size: 0.7rem; padding: 2px 8px; }
-            .rule-item { flex-wrap: wrap; }  /* 小屏幕允许换行，但保留分割线清晰 */
-        }
-        /* 在小屏幕上确保规则行不溢出，但为了体验保持原有换行，但规则信息依然滚动 */
-        @media (max-width: 640px) {
-            .rule-item {
-                flex-wrap: wrap;
-            }
-            .del-rule-btn {
-                margin-left: auto;
-            }
+            .mobile-guide { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
 <body>
 <div class="app-container">
-    <div id="securityBanner" class="security-banner" style="display: none;">
-        ⚠️ 提醒功能需要安全环境。请使用本地服务器打开（如 <code>python -m http.server 8080</code> 然后访问 http://localhost:8080），否则通知无法弹出。
-        <button id="dismissBanner">知道了</button>
+    <!-- 手机通知引导卡片 -->
+    <div class="mobile-guide">
+        <div class="guide-text">
+            📱 <strong>手机通知设置</strong><br>
+            1️⃣ 点击下方“🔔 测试通知”按钮，<strong>允许通知权限</strong><br>
+            2️⃣ 将本页面<strong>添加到主屏幕</strong> (Safari: 分享→添加到主屏幕; Chrome: 菜单→添加到主屏幕)<br>
+            3️⃣ 设置待办或周期任务，到点手机就会弹出提醒！
+        </div>
+        <button id="testNotifyBtn" class="test-notify-btn">🔔 测试通知</button>
     </div>
 
     <div class="dashboard">
@@ -541,17 +570,31 @@
             <div id="tab-rules" class="tab-content">
                 <div class="rules-container">
                     <div id="ruleListArea">加载中...</div>
-                    <button class="add-rule-btn" id="addRuleBtn">+ 新建周期任务</button>
+                    <button class="add-rule-btn" id="addRuleBtn">+ 新建周期规则</button>
                 </div>
             </div>
         </div>
     </div>
-    <footer>✅ 今日事 今日毕~</footer>
+    <footer>✅ 今日事 今日毕~~</footer>
 </div>
 
+<!-- 进展模态框 -->
+<div id="progressModal" class="modal">
+    <div class="modal-content">
+        <button class="close-modal" id="closeProgressModal">&times;</button>
+        <h4 id="progressTodoTitle">待办进展记录</h4>
+        <div id="progressLogList" class="progress-log-list"></div>
+        <div class="add-progress">
+            <input type="text" id="newProgressInput" placeholder="更新进展...">
+            <button id="addProgressBtn" class="add-btn" style="padding: 8px 16px;">添加</button>
+        </div>
+    </div>
+</div>
+
+<!-- 历史弹窗 -->
 <div id="historyModal" class="modal">
     <div class="modal-content">
-        <button class="close-modal" id="closeModalBtn">&times;</button>
+        <button class="close-modal" id="closeHistoryModal">&times;</button>
         <h3>📋 已完成任务记录 (含闭环时间)</h3>
         <div id="historyList"></div>
     </div>
@@ -567,6 +610,8 @@
     let selectedIcon = "📌";
     const icons = ["📌","✅","🚀","💡","🎯","📅","🕒","💪","🎨","📝"];
 
+    let activeProgress = { dateKey: null, todoId: null };
+
     function formatYMD(date) {
         let y = date.getFullYear();
         let m = String(date.getMonth() + 1).padStart(2, '0');
@@ -578,13 +623,13 @@
     function formatDateTime(iso) { if (!iso) return ''; return new Date(iso).toLocaleString(); }
 
     function saveAll() {
-        localStorage.setItem('todos_complete_v8', JSON.stringify(todosDB));
-        localStorage.setItem('recurring_rules_v8', JSON.stringify(recurringRules));
+        localStorage.setItem('todos_complete_v10', JSON.stringify(todosDB));
+        localStorage.setItem('recurring_rules_v10', JSON.stringify(recurringRules));
     }
     function loadAll() {
-        const storedTodos = localStorage.getItem('todos_complete_v8');
+        const storedTodos = localStorage.getItem('todos_complete_v10');
         if (storedTodos) { try { todosDB = JSON.parse(storedTodos); } catch(e) {} }
-        const storedRules = localStorage.getItem('recurring_rules_v8');
+        const storedRules = localStorage.getItem('recurring_rules_v10');
         if (storedRules) { try { recurringRules = JSON.parse(storedRules); } catch(e) {} }
         if (!recurringRules.length) {
             recurringRules.push({
@@ -607,6 +652,7 @@
                 if (t.completedAt === undefined) t.completedAt = null;
                 if (t.remindedAgain === undefined) t.remindedAgain = false;
                 if (t.lastRemindTime === undefined) t.lastRemindTime = null;
+                if (!t.progressLogs) t.progressLogs = [];
             });
         }
         recurringRules.forEach(r => {
@@ -615,6 +661,7 @@
         });
     }
 
+    // 通知功能
     function sendNotification(title, body) {
         if (!("Notification" in window)) return;
         if (Notification.permission === "granted") {
@@ -625,7 +672,18 @@
             });
         }
     }
+    function testNotification() {
+        if (Notification.permission === "granted") {
+            new Notification("测试通知", { body: "如果您能看到此消息，说明手机通知已就绪！请继续保持页面在后台或添加到主屏幕。" });
+        } else {
+            Notification.requestPermission().then(perm => {
+                if (perm === "granted") new Notification("测试通知", { body: "通知权限已开启，后续待办提醒将正常推送。" });
+                else alert("请手动允许通知权限，否则无法收到提醒。");
+            });
+        }
+    }
 
+    // 周期任务生成与提醒 (完整逻辑)
     function generateRecurringTasks() {
         const now = new Date();
         const todayKey = getLocalDateKey(now);
@@ -649,7 +707,8 @@
                         lastRemindTime: null,
                         completedAt: null,
                         createdAt: new Date().toISOString(),
-                        ruleId: rule.id
+                        ruleId: rule.id,
+                        progressLogs: []
                     };
                     todosDB[todayKey].push(newTask);
                     rule.lastGenDate = todayKey;
@@ -659,7 +718,6 @@
         }
         saveAll();
     }
-
     function checkRecurringOverdueReminder() {
         const now = new Date();
         const nowTimestamp = now.getTime();
@@ -676,7 +734,7 @@
                         const intervalMin = rule.reminderIntervalMin || 0;
                         if (intervalMin <= 0) {
                             if (!todo.remindedAgain) {
-                                sendNotification(`🔔 周期任务超时: ${todo.text}`, `原定 ${todo.remindTime.slice(5,16)} 未完成，请及时处理`);
+                                sendNotification(`🔔 周期任务超时: ${todo.text}`, `原定 ${todo.remindTime.slice(5,16)} 未完成`);
                                 todo.remindedAgain = true;
                                 saveAll();
                             }
@@ -684,7 +742,7 @@
                             const lastTime = todo.lastRemindTime ? new Date(todo.lastRemindTime).getTime() : remindTimestamp + windowMs;
                             const intervalMs = intervalMin * 60 * 1000;
                             if (nowTimestamp - lastTime >= intervalMs) {
-                                sendNotification(`🔔 周期任务超时 (${rule.reminderIntervalMin}分钟间隔): ${todo.text}`, `仍未完成，请及时处理`);
+                                sendNotification(`🔔 周期任务超时 (${rule.reminderIntervalMin}分钟间隔): ${todo.text}`, `仍未完成`);
                                 todo.lastRemindTime = new Date().toISOString();
                                 todo.remindedAgain = true;
                                 saveAll();
@@ -695,7 +753,6 @@
             }
         }
     }
-
     function checkNormalReminders() {
         const now = new Date();
         const nowStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}T${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
@@ -710,6 +767,7 @@
         }
     }
 
+    // 待办基础操作
     function addTodo(text, icon, remindTime) {
         if (!text.trim()) return false;
         const dateKey = getLocalDateKey(currentSelectedDate);
@@ -725,14 +783,14 @@
             lastRemindTime: null,
             completedAt: null,
             createdAt: new Date().toISOString(),
-            ruleId: null
+            ruleId: null,
+            progressLogs: []
         };
         todosDB[dateKey].push(newTodo);
         saveAll();
         refreshAll();
         return true;
     }
-
     function toggleComplete(dateKey, todoId) {
         const todo = todosDB[dateKey]?.find(t => t.id === todoId);
         if (todo) {
@@ -743,7 +801,6 @@
             refreshAll();
         }
     }
-
     function deleteTodo(dateKey, todoId) {
         const filtered = todosDB[dateKey]?.filter(t => t.id !== todoId) || [];
         if (filtered.length === 0) delete todosDB[dateKey];
@@ -752,132 +809,40 @@
         refreshAll();
     }
 
-    function renderRulesList() {
-        const container = document.getElementById('ruleListArea');
-        if (!container) return;
-        if (recurringRules.length === 0) {
-            container.innerHTML = '<div class="empty-rules">暂无周期规则，点击下方按钮添加</div>';
-            return;
-        }
+    // 进展记录
+    function openProgressModal(dateKey, todoId, todoText) {
+        activeProgress = { dateKey, todoId };
+        const todo = todosDB[dateKey]?.find(t => t.id === todoId);
+        if (!todo) return;
+        document.getElementById('progressTodoTitle').innerText = `📝 ${todoText} 进展记录`;
+        const container = document.getElementById('progressLogList');
         container.innerHTML = '';
-        recurringRules.forEach(rule => {
-            const weekMap = ['日', '一', '二', '三', '四', '五', '六'];
-            const daysStr = rule.daysOfWeek.map(d => weekMap[d]).join(',');
-            const intervalText = (rule.reminderIntervalMin && rule.reminderIntervalMin > 0) ? `间隔${rule.reminderIntervalMin}分钟` : '不重复';
-            const ruleDiv = document.createElement('div');
-            ruleDiv.className = 'rule-item';
-            // 内部结构：一行显示所有信息
-            ruleDiv.innerHTML = `
-                <div class="rule-info">
-                    <span style="font-size:1.3rem;">${rule.icon || '🔄'}</span>
-                    <strong>${rule.taskText}</strong>
-                    <span class="rule-badge">⏰ ${rule.timeStr}</span>
-                    <span class="rule-badge">📅 每 ${daysStr}</span>
-                    <span class="rule-badge">⏱️ 宽限 ${rule.reminderWindowMin}分钟</span>
-                    <span class="rule-badge">🔁 ${intervalText}</span>
-                </div>
-                <button class="del-rule-btn" data-id="${rule.id}">🗑️</button>
-            `;
-            container.appendChild(ruleDiv);
+        (todo.progressLogs || []).forEach(log => {
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            div.innerHTML = `<div class="log-time">${formatDateTime(log.timestamp)}</div><div>${escapeHtml(log.content)}</div>`;
+            container.appendChild(div);
         });
-        document.querySelectorAll('.del-rule-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = parseInt(btn.dataset.id);
-                recurringRules = recurringRules.filter(r => r.id !== id);
-                saveAll();
-                renderRulesList();
-            });
-        });
+        document.getElementById('progressModal').style.display = 'flex';
     }
-
-    function addRuleDialog() {
-        let taskText = prompt("周期性任务名称", "每周总结");
-        if (!taskText) return;
-        let timeStr = prompt("触发时间 (HH:MM, 24小时制)", "18:00");
-        if (!/^\d{2}:\d{2}$/.test(timeStr)) { alert("时间格式需 HH:MM，例如 18:00"); return; }
-        let weekInput = prompt("每周几执行？输入数字(0-6)，0=周日，1=周一，...，6=周六，用逗号分隔\n例如：0,1,2,3,4,5,6 表示每天；1,2,3,4,5 表示工作日", "1,2,3,4,5");
-        let days = weekInput.split(',').map(Number).filter(n => !isNaN(n) && n >= 0 && n <= 6);
-        if (days.length === 0) { alert("未选择有效星期，将默认周一至周五"); days = [1,2,3,4,5]; }
-        let icon = prompt("图标 (emoji)", "⏰");
-        let windowMin = parseInt(prompt("超时提醒宽限分钟 (未完成则首次提醒)", "60"));
-        if (isNaN(windowMin)) windowMin = 60;
-        let intervalMin = parseInt(prompt("重复提醒间隔分钟 (0 表示不重复提醒)", "30"));
-        if (isNaN(intervalMin)) intervalMin = 0;
-        recurringRules.push({
-            id: Date.now(),
-            name: taskText,
-            timeStr: timeStr,
-            daysOfWeek: days,
-            taskText: taskText,
-            icon: icon || "📌",
-            reminderWindowMin: windowMin,
-            reminderIntervalMin: intervalMin,
-            lastRemindTime: null,
-            lastGenDate: ""
-        });
-        saveAll();
-        renderRulesList();
-    }
-
-    function renderCalendar() {
-        const year = currentCalendarYear, month = currentCalendarMonth;
-        const firstDay = new Date(year, month, 1);
-        const startWeekday = firstDay.getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const prevMonthDays = new Date(year, month, 0).getDate();
-        const grid = document.getElementById('calendarGrid');
-        if (!grid) return;
-        grid.innerHTML = '';
-        for (let i = 0; i < 42; i++) {
-            let cellYear = year, cellMonth = month, cellDay;
-            let isOtherMonth = false;
-            if (i < startWeekday) {
-                const offset = startWeekday - i;
-                cellDay = prevMonthDays - offset + 1;
-                cellMonth = month - 1;
-                if (cellMonth < 0) { cellMonth = 11; cellYear--; }
-                isOtherMonth = true;
-            } else {
-                const dayIdx = i - startWeekday + 1;
-                if (dayIdx <= daysInMonth) cellDay = dayIdx;
-                else {
-                    cellDay = dayIdx - daysInMonth;
-                    cellMonth = month + 1;
-                    if (cellMonth > 11) { cellMonth = 0; cellYear++; }
-                    isOtherMonth = true;
-                }
-            }
-            const cellDate = new Date(cellYear, cellMonth, cellDay);
-            const cellKey = getLocalDateKey(cellDate);
-            const hasTasks = todosDB[cellKey] && todosDB[cellKey].length > 0;
-            const isSelected = (cellKey === getLocalDateKey(currentSelectedDate));
-            const dayDiv = document.createElement('div');
-            dayDiv.className = 'cal-day';
-            if (isOtherMonth) dayDiv.classList.add('other-month');
-            if (isSelected) dayDiv.classList.add('selected');
-            dayDiv.innerText = cellDay;
-            if (hasTasks) {
-                const dot = document.createElement('span');
-                dot.className = 'task-dot';
-                dayDiv.appendChild(dot);
-            }
-            dayDiv.addEventListener('click', (function(dateObj) {
-                return function() {
-                    currentSelectedDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
-                    if (dateObj.getFullYear() !== currentCalendarYear || dateObj.getMonth() !== currentCalendarMonth) {
-                        currentCalendarYear = dateObj.getFullYear();
-                        currentCalendarMonth = dateObj.getMonth();
-                    }
-                    refreshAll();
-                };
-            })(cellDate));
-            grid.appendChild(dayDiv);
+    function addProgress() {
+        const input = document.getElementById('newProgressInput');
+        const content = input.value.trim();
+        if (!content) return;
+        const { dateKey, todoId } = activeProgress;
+        const todo = todosDB[dateKey]?.find(t => t.id === todoId);
+        if (todo) {
+            if (!todo.progressLogs) todo.progressLogs = [];
+            todo.progressLogs.push({ timestamp: new Date().toISOString(), content: content });
+            saveAll();
+            input.value = '';
+            openProgressModal(dateKey, todoId, todo.text);
+            refreshAll();
         }
-        const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-        const monthYearSpan = document.getElementById('monthYearDisplay');
-        if (monthYearSpan) monthYearSpan.innerText = `${year}年 ${monthNames[month]}`;
     }
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
+    // 渲染待办列表（含进展标识）
     function renderCurrentTodoList() {
         const dateKey = getLocalDateKey(currentSelectedDate);
         const todos = todosDB[dateKey] || [];
@@ -897,224 +862,168 @@
             const li = document.createElement('li');
             li.className = 'todo-item';
             if (todo.completed) li.classList.add('completed');
-            const iconSpan = document.createElement('span');
-            iconSpan.className = 'todo-icon';
-            iconSpan.innerText = todo.icon || '📌';
-            const chk = document.createElement('input');
-            chk.type = 'checkbox';
-            chk.className = 'todo-check';
-            chk.checked = todo.completed;
-            chk.addEventListener('change', () => toggleComplete(dateKey, todo.id));
-            const textSpan = document.createElement('span');
-            textSpan.className = 'todo-text';
-            textSpan.innerText = todo.text;
-            const rightDiv = document.createElement('div');
-            rightDiv.style.display = 'flex';
-            rightDiv.style.gap = '6px';
+            const iconSpan = document.createElement('span'); iconSpan.className = 'todo-icon'; iconSpan.innerText = todo.icon || '📌';
+            const chk = document.createElement('input'); chk.type='checkbox'; chk.className='todo-check'; chk.checked=todo.completed; chk.addEventListener('change',()=>toggleComplete(dateKey,todo.id));
+            const textSpan = document.createElement('span'); textSpan.className='todo-text'; textSpan.innerText = todo.text;
+            const rightDiv = document.createElement('div'); rightDiv.style.display='flex'; rightDiv.style.gap='6px';
             if (todo.completed && todo.completedAt) {
-                const badge = document.createElement('span');
-                badge.className = 'completion-badge';
-                badge.innerHTML = `✅ ${new Date(todo.completedAt).toLocaleTimeString()}`;
+                const badge = document.createElement('span'); badge.className='completion-badge'; badge.innerHTML = `✅ ${new Date(todo.completedAt).toLocaleTimeString()}`;
                 rightDiv.appendChild(badge);
             }
             if (todo.remindTime) {
-                const rbadge = document.createElement('span');
-                rbadge.className = 'reminder-badge';
-                rbadge.innerHTML = `⏰ ${todo.remindTime.slice(5,16)}`;
+                const rbadge = document.createElement('span'); rbadge.className='reminder-badge'; rbadge.innerHTML = `⏰ ${todo.remindTime.slice(5,16)}`;
                 rightDiv.appendChild(rbadge);
             }
-            const editBtn = document.createElement('button');
-            editBtn.innerHTML = '✏️';
-            editBtn.className = 'edit-icon-btn';
-            editBtn.addEventListener('click', () => {
-                const newTxt = prompt('编辑任务', todo.text);
-                if (newTxt && newTxt.trim()) { todo.text = newTxt.trim(); saveAll(); refreshAll(); }
+            const hasProgress = todo.progressLogs && todo.progressLogs.length > 0;
+            const progBtn = document.createElement('span');
+            progBtn.className = 'progress-badge';
+            progBtn.innerHTML = hasProgress ? `📝 ${todo.progressLogs.length}` : `📝 添加`;
+            progBtn.style.cursor = 'pointer';
+            progBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openProgressModal(dateKey, todo.id, todo.text);
             });
-            const delBtn = document.createElement('button');
-            delBtn.innerHTML = '🗑️';
-            delBtn.className = 'delete-todo';
+            rightDiv.appendChild(progBtn);
+            const editBtn = document.createElement('button'); editBtn.innerHTML='✏️'; editBtn.className='edit-icon-btn';
+            editBtn.addEventListener('click', () => { const newTxt = prompt('编辑任务', todo.text); if (newTxt && newTxt.trim()) { todo.text = newTxt.trim(); saveAll(); refreshAll(); } });
+            const delBtn = document.createElement('button'); delBtn.innerHTML='🗑️'; delBtn.className='delete-todo';
             delBtn.addEventListener('click', () => deleteTodo(dateKey, todo.id));
-            li.appendChild(iconSpan);
-            li.appendChild(chk);
-            li.appendChild(textSpan);
-            li.appendChild(rightDiv);
-            li.appendChild(editBtn);
-            li.appendChild(delBtn);
+            li.appendChild(iconSpan); li.appendChild(chk); li.appendChild(textSpan); li.appendChild(rightDiv); li.appendChild(editBtn); li.appendChild(delBtn);
             container.appendChild(li);
         });
+    }
+
+    // 渲染日历
+    function renderCalendar() {
+        const year = currentCalendarYear, month = currentCalendarMonth;
+        const firstDay = new Date(year, month, 1);
+        const startWeekday = firstDay.getDay();
+        const daysInMonth = new Date(year, month+1, 0).getDate();
+        const prevMonthDays = new Date(year, month, 0).getDate();
+        const grid = document.getElementById('calendarGrid');
+        if(!grid) return;
+        grid.innerHTML = '';
+        for(let i=0;i<42;i++){
+            let cellYear=year, cellMonth=month, cellDay, isOther=false;
+            if(i<startWeekday){
+                cellDay = prevMonthDays - (startWeekday-i) + 1;
+                cellMonth--; if(cellMonth<0){cellMonth=11; cellYear--;}
+                isOther=true;
+            } else {
+                let idx = i-startWeekday+1;
+                if(idx<=daysInMonth) cellDay=idx;
+                else { cellDay=idx-daysInMonth; cellMonth++; if(cellMonth>11){cellMonth=0;cellYear++;} isOther=true; }
+            }
+            const cellDate = new Date(cellYear, cellMonth, cellDay);
+            const cellKey = getLocalDateKey(cellDate);
+            const hasTasks = todosDB[cellKey] && todosDB[cellKey].length>0;
+            const isSelected = (cellKey === getLocalDateKey(currentSelectedDate));
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'cal-day';
+            if(isOther) dayDiv.classList.add('other-month');
+            if(isSelected) dayDiv.classList.add('selected');
+            dayDiv.innerText = cellDay;
+            if(hasTasks){ const dot=document.createElement('span'); dot.className='task-dot'; dayDiv.appendChild(dot); }
+            dayDiv.addEventListener('click', (function(dateObj){ return function(){ currentSelectedDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate()); if(dateObj.getFullYear()!==currentCalendarYear||dateObj.getMonth()!==currentCalendarMonth){ currentCalendarYear=dateObj.getFullYear(); currentCalendarMonth=dateObj.getMonth(); } refreshAll(); }; })(cellDate));
+            grid.appendChild(dayDiv);
+        }
+        const monthNames=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        document.getElementById('monthYearDisplay').innerText=`${year}年 ${monthNames[month]}`;
     }
 
     function renderOverdueTasks() {
         const todayKey = getTodayKey();
         const items = [];
-        for (let key in todosDB) {
-            if (key < todayKey) {
-                todosDB[key].forEach(todo => {
-                    if (!todo.completed) items.push({ dateKey: key, todo });
-                });
-            }
-        }
+        for(let key in todosDB) if(key<todayKey) todosDB[key].forEach(t=>{ if(!t.completed) items.push({dateKey:key,todo:t}); });
         const container = document.getElementById('overdueListContainer');
-        if (!items.length) { container.innerHTML = '<li class="empty-tip">🍃 无逾期任务</li>'; return; }
-        container.innerHTML = '';
-        items.forEach(({ dateKey, todo }) => {
-            const li = document.createElement('li');
-            li.className = 'overdue-item';
-            const iconSpan = document.createElement('span');
-            iconSpan.className = 'todo-icon';
-            iconSpan.innerText = todo.icon || '📌';
-            const chk = document.createElement('input');
-            chk.type = 'checkbox';
-            chk.className = 'todo-check';
-            chk.addEventListener('change', () => toggleComplete(dateKey, todo.id));
-            const textSpan = document.createElement('span');
-            textSpan.className = 'todo-text';
-            textSpan.innerText = todo.text;
-            const badge = document.createElement('span');
-            badge.className = 'reminder-badge';
-            badge.innerText = dateKey.slice(5);
-            const jumpBtn = document.createElement('button');
-            jumpBtn.innerHTML = '📅';
-            jumpBtn.className = 'edit-icon-btn';
-            jumpBtn.addEventListener('click', () => {
-                const [yy, mm, dd] = dateKey.split('-').map(Number);
-                const target = new Date(yy, mm-1, dd);
-                currentSelectedDate = target;
-                currentCalendarYear = target.getFullYear();
-                currentCalendarMonth = target.getMonth();
-                refreshAll();
-            });
-            const delBtn = document.createElement('button');
-            delBtn.innerHTML = '🗑️';
-            delBtn.className = 'delete-todo';
-            delBtn.addEventListener('click', () => deleteTodo(dateKey, todo.id));
-            li.append(iconSpan, chk, textSpan, badge, jumpBtn, delBtn);
+        if(!items.length){ container.innerHTML='<li class="empty-tip">🍃 无逾期任务</li>'; return; }
+        container.innerHTML='';
+        items.forEach(({dateKey,todo})=>{
+            const li=document.createElement('li'); li.className='overdue-item';
+            const iconSpan=document.createElement('span'); iconSpan.className='todo-icon'; iconSpan.innerText=todo.icon||'📌';
+            const chk=document.createElement('input'); chk.type='checkbox'; chk.className='todo-check'; chk.addEventListener('change',()=>toggleComplete(dateKey,todo.id));
+            const textSpan=document.createElement('span'); textSpan.className='todo-text'; textSpan.innerText=todo.text;
+            const badge=document.createElement('span'); badge.className='reminder-badge'; badge.innerText=dateKey.slice(5);
+            const jumpBtn=document.createElement('button'); jumpBtn.innerHTML='📅'; jumpBtn.className='edit-icon-btn';
+            jumpBtn.addEventListener('click',()=>{ const [yy,mm,dd]=dateKey.split('-').map(Number); const target=new Date(yy,mm-1,dd); currentSelectedDate=target; currentCalendarYear=target.getFullYear(); currentCalendarMonth=target.getMonth(); refreshAll(); });
+            const delBtn=document.createElement('button'); delBtn.innerHTML='🗑️'; delBtn.className='delete-todo'; delBtn.addEventListener('click',()=>deleteTodo(dateKey,todo.id));
+            li.append(iconSpan,chk,textSpan,badge,jumpBtn,delBtn);
             container.appendChild(li);
         });
     }
 
-    function showHistory() {
-        const historyList = [];
-        for (let dateKey in todosDB) {
-            for (let todo of todosDB[dateKey]) {
-                if (todo.completed) {
-                    historyList.push({ date: dateKey, text: todo.text, icon: todo.icon, createdAt: todo.createdAt, completedAt: todo.completedAt });
-                }
-            }
-        }
-        historyList.sort((a,b) => new Date(b.completedAt) - new Date(a.completedAt));
-        const container = document.getElementById('historyList');
-        if (historyList.length === 0) container.innerHTML = '<p>暂无已完成任务</p>';
-        else {
-            let html = `<table class="history-table"><thead><tr><th>任务</th><th>创建时间</th><th>完成时间</th></tr></thead><tbody>`;
-            historyList.forEach(h => {
-                html += `<tr><td>${h.icon || ''} ${h.text}</td><td>${formatDateTime(h.createdAt)}</td><td>${formatDateTime(h.completedAt)}</td></tr>`;
-            });
-            html += `</tbody></table>`;
-            container.innerHTML = html;
-        }
-        document.getElementById('historyModal').style.display = 'flex';
+    function renderRulesList() {
+        const container=document.getElementById('ruleListArea');
+        if(!container) return;
+        if(recurringRules.length===0){ container.innerHTML='<div class="empty-rules">暂无周期任务，点击下方按钮添加</div>'; return; }
+        container.innerHTML='';
+        recurringRules.forEach(rule=>{
+            const weekMap=['日','一','二','三','四','五','六'];
+            const daysStr=rule.daysOfWeek.map(d=>weekMap[d]).join(',');
+            const intervalText=(rule.reminderIntervalMin&&rule.reminderIntervalMin>0)?`间隔${rule.reminderIntervalMin}分钟`:'不重复';
+            const div=document.createElement('div'); div.className='rule-item';
+            div.innerHTML=`<div class="rule-info"><span style="font-size:1.3rem;">${rule.icon||'🔄'}</span><strong>${rule.taskText}</strong><span class="rule-badge">⏰ ${rule.timeStr}</span><span class="rule-badge">📅 每 ${daysStr}</span><span class="rule-badge">⏱️ 宽限 ${rule.reminderWindowMin}分钟</span><span class="rule-badge">🔁 ${intervalText}</span></div><button class="del-rule-btn" data-id="${rule.id}">🗑️</button>`;
+            container.appendChild(div);
+        });
+        document.querySelectorAll('.del-rule-btn').forEach(btn=>{ btn.addEventListener('click',(e)=>{ const id=parseInt(btn.dataset.id); recurringRules=recurringRules.filter(r=>r.id!==id); saveAll(); renderRulesList(); }); });
     }
 
-    function refreshAll() {
-        renderCalendar();
-        renderCurrentTodoList();
-        renderOverdueTasks();
-        renderRulesList();
+    function showHistory() {
+        const historyList=[];
+        for(let key in todosDB) for(let todo of todosDB[key]) if(todo.completed) historyList.push({date:key,text:todo.text,icon:todo.icon,createdAt:todo.createdAt,completedAt:todo.completedAt});
+        historyList.sort((a,b)=>new Date(b.completedAt)-new Date(a.completedAt));
+        const container=document.getElementById('historyList');
+        if(historyList.length===0) container.innerHTML='<p>暂无已完成任务</p>';
+        else{ let html=`<table class="history-table"><thead><tr><th>任务</th><th>创建时间</th><th>完成时间</th></tr></thead><tbody>`; historyList.forEach(h=>{ html+=`<tr><td>${h.icon||''} ${h.text}</td><td>${formatDateTime(h.createdAt)}</td><td>${formatDateTime(h.completedAt)}</td>`; }); html+=`</tbody></table>`; container.innerHTML=html; }
+        document.getElementById('historyModal').style.display='flex';
     }
+
+    function addRuleDialog() {
+        let taskText=prompt("周期性任务名称","每周总结"); if(!taskText) return;
+        let timeStr=prompt("触发时间 (HH:MM, 24小时制)","18:00"); if(!/^\d{2}:\d{2}$/.test(timeStr)){ alert("时间格式需 HH:MM"); return; }
+        let weekInput=prompt("每周几执行？输入数字(0-6)，0=周日，1=周一，...，6=周六，用逗号分隔\n例如：0,1,2,3,4,5,6 表示每天","1,2,3,4,5");
+        let days=weekInput.split(',').map(Number).filter(n=>!isNaN(n)&&n>=0&&n<=6);
+        if(days.length===0) days=[1,2,3,4,5];
+        let icon=prompt("图标 (emoji)","⏰");
+        let windowMin=parseInt(prompt("超时提醒宽限分钟 (未完成则首次提醒)","60")); if(isNaN(windowMin)) windowMin=60;
+        let intervalMin=parseInt(prompt("重复提醒间隔分钟 (0 表示不重复提醒)","30")); if(isNaN(intervalMin)) intervalMin=0;
+        recurringRules.push({ id:Date.now(), name:taskText, timeStr:timeStr, daysOfWeek:days, taskText:taskText, icon:icon||"📌", reminderWindowMin:windowMin, reminderIntervalMin:intervalMin, lastRemindTime:null, lastGenDate:"" });
+        saveAll(); renderRulesList();
+    }
+
+    function refreshAll() { renderCalendar(); renderCurrentTodoList(); renderOverdueTasks(); renderRulesList(); }
 
     function initIconSelector() {
-        const container = document.getElementById('iconSelector');
-        if (!container) return;
-        container.innerHTML = '';
-        icons.forEach(ic => {
-            const span = document.createElement('span');
-            span.className = 'icon-option';
-            span.innerText = ic;
-            span.dataset.icon = ic;
-            if (ic === selectedIcon) span.classList.add('selected-icon');
-            span.addEventListener('click', () => {
-                document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected-icon'));
-                span.classList.add('selected-icon');
-                selectedIcon = ic;
-            });
-            container.appendChild(span);
-        });
+        const container=document.getElementById('iconSelector'); if(!container) return;
+        container.innerHTML='';
+        icons.forEach(ic=>{ const span=document.createElement('span'); span.className='icon-option'; span.innerText=ic; span.dataset.icon=ic; if(ic===selectedIcon) span.classList.add('selected-icon'); span.addEventListener('click',()=>{ document.querySelectorAll('.icon-option').forEach(el=>el.classList.remove('selected-icon')); span.classList.add('selected-icon'); selectedIcon=ic; }); container.appendChild(span); });
     }
 
-    function checkSecureContext() {
-        if (!window.isSecureContext) {
-            document.getElementById('securityBanner').style.display = 'flex';
-        } else {
-            if (Notification.permission !== "granted") Notification.requestPermission();
-        }
-    }
-
-    let intervalId = null;
-    function startBackgroundTasks() {
-        if (intervalId) clearInterval(intervalId);
-        intervalId = setInterval(() => {
-            generateRecurringTasks();
-            checkRecurringOverdueReminder();
-            checkNormalReminders();
-            refreshAll();
-        }, 60000);
-    }
+    let intervalId=null;
+    function startBackgroundTasks() { if(intervalId) clearInterval(intervalId); intervalId=setInterval(()=>{ generateRecurringTasks(); checkRecurringOverdueReminder(); checkNormalReminders(); refreshAll(); },60000); }
 
     function bindEvents() {
-        document.getElementById('prevMonthBtn').addEventListener('click', () => {
-            let nm = currentCalendarMonth - 1, ny = currentCalendarYear;
-            if (nm < 0) { nm = 11; ny--; }
-            currentCalendarMonth = nm; currentCalendarYear = ny; refreshAll();
-        });
-        document.getElementById('nextMonthBtn').addEventListener('click', () => {
-            let nm = currentCalendarMonth + 1, ny = currentCalendarYear;
-            if (nm > 11) { nm = 0; ny++; }
-            currentCalendarMonth = nm; currentCalendarYear = ny; refreshAll();
-        });
-        document.getElementById('todayBtn').addEventListener('click', () => {
-            const today = new Date();
-            currentSelectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            currentCalendarYear = today.getFullYear(); currentCalendarMonth = today.getMonth();
-            refreshAll();
-        });
-        document.getElementById('addTodoBtn').addEventListener('click', () => {
-            const input = document.getElementById('todoInput');
-            const remindVal = document.getElementById('reminderTimeInput').value;
-            if (addTodo(input.value, selectedIcon, remindVal || null)) {
-                input.value = '';
-                document.getElementById('reminderTimeInput').value = '';
-            } else alert("请输入内容");
-        });
-        document.getElementById('todoInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('addTodoBtn').click(); });
-        document.getElementById('historyBtn').addEventListener('click', showHistory);
-        document.getElementById('closeModalBtn').addEventListener('click', () => { document.getElementById('historyModal').style.display = 'none'; });
-        document.getElementById('addRuleBtn').addEventListener('click', addRuleDialog);
-        document.getElementById('dismissBanner')?.addEventListener('click', () => { document.getElementById('securityBanner').style.display = 'none'; });
-        window.addEventListener('click', (e) => { if (e.target === document.getElementById('historyModal')) document.getElementById('historyModal').style.display = 'none'; });
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const targetTab = btn.dataset.tab;
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-                document.getElementById(`tab-${targetTab}`).classList.add('active');
-                if (targetTab === 'rules') renderRulesList();
-            });
-        });
+        document.getElementById('prevMonthBtn').addEventListener('click',()=>{ let nm=currentCalendarMonth-1, ny=currentCalendarYear; if(nm<0){nm=11;ny--;} currentCalendarMonth=nm; currentCalendarYear=ny; refreshAll(); });
+        document.getElementById('nextMonthBtn').addEventListener('click',()=>{ let nm=currentCalendarMonth+1, ny=currentCalendarYear; if(nm>11){nm=0;ny++;} currentCalendarMonth=nm; currentCalendarYear=ny; refreshAll(); });
+        document.getElementById('todayBtn').addEventListener('click',()=>{ const t=new Date(); currentSelectedDate=new Date(t.getFullYear(),t.getMonth(),t.getDate()); currentCalendarYear=t.getFullYear(); currentCalendarMonth=t.getMonth(); refreshAll(); });
+        document.getElementById('addTodoBtn').addEventListener('click',()=>{ const inp=document.getElementById('todoInput'); const remind=document.getElementById('reminderTimeInput').value; if(addTodo(inp.value,selectedIcon,remind||null)) inp.value='', document.getElementById('reminderTimeInput').value=''; else alert("请输入内容"); });
+        document.getElementById('todoInput').addEventListener('keypress',e=>{ if(e.key==='Enter') document.getElementById('addTodoBtn').click(); });
+        document.getElementById('historyBtn').addEventListener('click',showHistory);
+        document.getElementById('closeHistoryModal').addEventListener('click',()=>{ document.getElementById('historyModal').style.display='none'; });
+        document.getElementById('addRuleBtn').addEventListener('click',addRuleDialog);
+        document.getElementById('testNotifyBtn').addEventListener('click',testNotification);
+        document.getElementById('closeProgressModal').addEventListener('click',()=>{ document.getElementById('progressModal').style.display='none'; });
+        document.getElementById('addProgressBtn').addEventListener('click',addProgress);
+        window.addEventListener('click',(e)=>{ if(e.target===document.getElementById('historyModal')) document.getElementById('historyModal').style.display='none'; if(e.target===document.getElementById('progressModal')) document.getElementById('progressModal').style.display='none'; });
+        document.querySelectorAll('.tab-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ const target=btn.dataset.tab; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active')); document.getElementById(`tab-${target}`).classList.add('active'); if(target==='rules') renderRulesList(); }); });
     }
 
     function init() {
-        loadAll();
-        initIconSelector();
-        const today = new Date();
-        currentSelectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        currentCalendarYear = today.getFullYear(); currentCalendarMonth = today.getMonth();
-        bindEvents();
-        refreshAll();
-        checkSecureContext();
-        startBackgroundTasks();
-        generateRecurringTasks();
+        loadAll(); initIconSelector(); const today=new Date(); currentSelectedDate=new Date(today.getFullYear(),today.getMonth(),today.getDate()); currentCalendarYear=today.getFullYear(); currentCalendarMonth=today.getMonth(); bindEvents(); refreshAll(); startBackgroundTasks(); generateRecurringTasks();
+        // 自动请求通知权限
+        if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+            Notification.requestPermission();
+        }
     }
     init();
 </script>
