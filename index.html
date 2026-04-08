@@ -40,47 +40,6 @@
             z-index: 2;
         }
 
-        /* 手机通知引导卡片 */
-        .mobile-guide {
-            background: linear-gradient(135deg, #e8f0fe, #d9e8f5);
-            border-radius: 24px;
-            padding: 16px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        .guide-text {
-            flex: 1;
-            font-size: 0.85rem;
-            color: #1a4c6e;
-        }
-        .guide-text strong {
-            color: #2c7cb6;
-        }
-        .test-notify-btn {
-            background: #2c7cb6;
-            border: none;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-weight: 500;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .add-to-home {
-            background: #f0f4fa;
-            border-radius: 40px;
-            padding: 6px 12px;
-            font-size: 0.7rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
         .dashboard {
             display: flex;
             flex-wrap: wrap;
@@ -501,23 +460,11 @@
         @media (max-width: 780px) {
             .add-row { flex-direction: column; align-items: stretch; }
             .rule-info { gap: 8px; }
-            .mobile-guide { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
 <body>
 <div class="app-container">
-    <!-- 手机通知引导卡片 -->
-    <div class="mobile-guide">
-        <div class="guide-text">
-            📱 <strong>手机通知设置</strong><br>
-            1️⃣ 点击下方“🔔 测试通知”按钮，<strong>允许通知权限</strong><br>
-            2️⃣ 将本页面<strong>添加到主屏幕</strong> (Safari: 分享→添加到主屏幕; Chrome: 菜单→添加到主屏幕)<br>
-            3️⃣ 设置待办或周期任务，到点手机就会弹出提醒！
-        </div>
-        <button id="testNotifyBtn" class="test-notify-btn">🔔 测试通知</button>
-    </div>
-
     <div class="dashboard">
         <div class="calendar-panel">
             <div class="cal-header">
@@ -570,7 +517,7 @@
             <div id="tab-rules" class="tab-content">
                 <div class="rules-container">
                     <div id="ruleListArea">加载中...</div>
-                    <button class="add-rule-btn" id="addRuleBtn">+ 新建周期规则</button>
+                    <button class="add-rule-btn" id="addRuleBtn">+ 新建周期任务</button>
                 </div>
             </div>
         </div>
@@ -623,13 +570,13 @@
     function formatDateTime(iso) { if (!iso) return ''; return new Date(iso).toLocaleString(); }
 
     function saveAll() {
-        localStorage.setItem('todos_complete_v10', JSON.stringify(todosDB));
-        localStorage.setItem('recurring_rules_v10', JSON.stringify(recurringRules));
+        localStorage.setItem('todos_complete_v11', JSON.stringify(todosDB));
+        localStorage.setItem('recurring_rules_v11', JSON.stringify(recurringRules));
     }
     function loadAll() {
-        const storedTodos = localStorage.getItem('todos_complete_v10');
+        const storedTodos = localStorage.getItem('todos_complete_v11');
         if (storedTodos) { try { todosDB = JSON.parse(storedTodos); } catch(e) {} }
-        const storedRules = localStorage.getItem('recurring_rules_v10');
+        const storedRules = localStorage.getItem('recurring_rules_v11');
         if (storedRules) { try { recurringRules = JSON.parse(storedRules); } catch(e) {} }
         if (!recurringRules.length) {
             recurringRules.push({
@@ -672,18 +619,8 @@
             });
         }
     }
-    function testNotification() {
-        if (Notification.permission === "granted") {
-            new Notification("测试通知", { body: "如果您能看到此消息，说明手机通知已就绪！请继续保持页面在后台或添加到主屏幕。" });
-        } else {
-            Notification.requestPermission().then(perm => {
-                if (perm === "granted") new Notification("测试通知", { body: "通知权限已开启，后续待办提醒将正常推送。" });
-                else alert("请手动允许通知权限，否则无法收到提醒。");
-            });
-        }
-    }
 
-    // 周期任务生成与提醒 (完整逻辑)
+    // 周期任务生成与提醒
     function generateRecurringTasks() {
         const now = new Date();
         const todayKey = getLocalDateKey(now);
@@ -842,7 +779,7 @@
     }
     function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-    // 渲染待办列表（含进展标识）
+    // 渲染待办列表
     function renderCurrentTodoList() {
         const dateKey = getLocalDateKey(currentSelectedDate);
         const todos = todosDB[dateKey] || [];
@@ -1011,7 +948,6 @@
         document.getElementById('historyBtn').addEventListener('click',showHistory);
         document.getElementById('closeHistoryModal').addEventListener('click',()=>{ document.getElementById('historyModal').style.display='none'; });
         document.getElementById('addRuleBtn').addEventListener('click',addRuleDialog);
-        document.getElementById('testNotifyBtn').addEventListener('click',testNotification);
         document.getElementById('closeProgressModal').addEventListener('click',()=>{ document.getElementById('progressModal').style.display='none'; });
         document.getElementById('addProgressBtn').addEventListener('click',addProgress);
         window.addEventListener('click',(e)=>{ if(e.target===document.getElementById('historyModal')) document.getElementById('historyModal').style.display='none'; if(e.target===document.getElementById('progressModal')) document.getElementById('progressModal').style.display='none'; });
