@@ -354,15 +354,20 @@
         .todo-text { flex: 2; font-size: 0.92rem; word-break: break-word; }
         .completed .todo-text { text-decoration: line-through; color: #8aaac7; }
         .progress-badge {
-            background: #f0f4fa;
+            background: #eef3fc;
             border-radius: 30px;
-            padding: 2px 8px;
+            padding: 4px 10px;
             font-size: 0.7rem;
             display: inline-flex;
             align-items: center;
             gap: 4px;
             cursor: pointer;
-            color: #4a6f8f;
+            color: #2c6e96;
+            transition: 0.1s;
+            font-weight: 500;
+        }
+        .progress-badge:hover {
+            background: #e2ecf5;
         }
         .completion-badge, .reminder-badge {
             font-size: 0.65rem;
@@ -460,6 +465,7 @@
         @media (max-width: 780px) {
             .add-row { flex-direction: column; align-items: stretch; }
             .rule-info { gap: 8px; }
+            .progress-badge { padding: 2px 8px; }
         }
     </style>
 </head>
@@ -551,7 +557,6 @@
     // ---------- 固定存储键名 ----------
     const STORAGE_TODOS_KEY = 'lingxi_todos_app';
     const STORAGE_RULES_KEY = 'lingxi_rules_app';
-    // 旧版本可能使用的键名列表（用于迁移）
     const OLD_TODOS_KEYS = ['todos_complete_v5', 'todos_complete_v6', 'todos_complete_v7', 'todos_complete_v8', 'todos_complete_v9', 'todos_complete_v10', 'todos_complete_v11'];
     const OLD_RULES_KEYS = ['recurring_rules_v5', 'recurring_rules_v6', 'recurring_rules_v7', 'recurring_rules_v8', 'recurring_rules_v9', 'recurring_rules_v10', 'recurring_rules_v11'];
 
@@ -580,11 +585,9 @@
         localStorage.setItem(STORAGE_RULES_KEY, JSON.stringify(recurringRules));
     }
 
-    // 迁移旧数据
     function migrateOldData() {
         let mergedTodos = {};
         let mergedRules = [];
-        // 尝试从旧键中读取数据
         for (let oldKey of OLD_TODOS_KEYS) {
             const oldData = localStorage.getItem(oldKey);
             if (oldData) {
@@ -594,7 +597,7 @@
                         Object.assign(mergedTodos, parsed);
                     }
                 } catch(e) {}
-                localStorage.removeItem(oldKey); // 清除旧数据避免重复
+                localStorage.removeItem(oldKey);
             }
         }
         for (let oldKey of OLD_RULES_KEYS) {
@@ -609,7 +612,6 @@
                 localStorage.removeItem(oldKey);
             }
         }
-        // 去重规则（基于id）
         const uniqueRules = [];
         const ruleIds = new Set();
         for (let rule of mergedRules) {
@@ -624,12 +626,9 @@
         if (uniqueRules.length > 0) {
             recurringRules = uniqueRules;
         }
-        // 如果已经有新版本的数据（优先保留），则上面旧数据只是补充，不覆盖已存在的key
-        // 但为了安全，先加载新版本，再补充旧数据中不存在的条目（已在loadAll中实现）
     }
 
     function loadAll() {
-        // 先尝试加载新版本数据
         const storedTodos = localStorage.getItem(STORAGE_TODOS_KEY);
         const storedRules = localStorage.getItem(STORAGE_RULES_KEY);
         if (storedTodos) {
@@ -638,11 +637,9 @@
         if (storedRules) {
             try { recurringRules = JSON.parse(storedRules); } catch(e) {}
         }
-        // 如果没有新版本数据或数据为空，尝试从旧版本迁移
         if (Object.keys(todosDB).length === 0 && recurringRules.length === 0) {
             migrateOldData();
         } else {
-            // 即使有新版本，也尝试从旧版本中补充可能遗漏的数据（合并，不覆盖已有）
             for (let oldKey of OLD_TODOS_KEYS) {
                 const oldData = localStorage.getItem(oldKey);
                 if (oldData) {
@@ -677,7 +674,6 @@
             }
         }
 
-        // 确保每个待办项有必要的字段
         for (let key in todosDB) {
             todosDB[key].forEach(t => {
                 if (!t.createdAt) t.createdAt = new Date().toISOString();
@@ -691,11 +687,9 @@
             if (r.reminderIntervalMin === undefined) r.reminderIntervalMin = 0;
             if (r.lastRemindTime === undefined) r.lastRemindTime = null;
         });
-        // 不再自动添加默认规则！保持用户现有规则，如果为空则为空。
-        saveAll(); // 确保保存合并后的数据
+        saveAll();
     }
 
-    // 通知功能
     function sendNotification(title, body) {
         if (!("Notification" in window)) return;
         if (Notification.permission === "granted") {
@@ -707,7 +701,6 @@
         }
     }
 
-    // 周期任务生成与提醒
     function generateRecurringTasks() {
         const now = new Date();
         const todayKey = getLocalDateKey(now);
@@ -742,6 +735,7 @@
         }
         saveAll();
     }
+
     function checkRecurringOverdueReminder() {
         const now = new Date();
         const nowTimestamp = now.getTime();
@@ -777,6 +771,7 @@
             }
         }
     }
+
     function checkNormalReminders() {
         const now = new Date();
         const nowStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}T${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
@@ -791,7 +786,6 @@
         }
     }
 
-    // 待办基础操作
     function addTodo(text, icon, remindTime) {
         if (!text.trim()) return false;
         const dateKey = getLocalDateKey(currentSelectedDate);
@@ -815,6 +809,7 @@
         refreshAll();
         return true;
     }
+
     function toggleComplete(dateKey, todoId) {
         const todo = todosDB[dateKey]?.find(t => t.id === todoId);
         if (todo) {
@@ -825,6 +820,7 @@
             refreshAll();
         }
     }
+
     function deleteTodo(dateKey, todoId) {
         const filtered = todosDB[dateKey]?.filter(t => t.id !== todoId) || [];
         if (filtered.length === 0) delete todosDB[dateKey];
@@ -833,7 +829,6 @@
         refreshAll();
     }
 
-    // 进展记录
     function openProgressModal(dateKey, todoId, todoText) {
         activeProgress = { dateKey, todoId };
         const todo = todosDB[dateKey]?.find(t => t.id === todoId);
@@ -849,6 +844,7 @@
         });
         document.getElementById('progressModal').style.display = 'flex';
     }
+
     function addProgress() {
         const input = document.getElementById('newProgressInput');
         const content = input.value.trim();
@@ -864,9 +860,10 @@
             refreshAll();
         }
     }
+
     function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-    // 渲染待办列表
+    // 渲染待办列表 - 确保进展按钮始终可见
     function renderCurrentTodoList() {
         const dateKey = getLocalDateKey(currentSelectedDate);
         const todos = todosDB[dateKey] || [];
@@ -889,7 +886,7 @@
             const iconSpan = document.createElement('span'); iconSpan.className = 'todo-icon'; iconSpan.innerText = todo.icon || '📌';
             const chk = document.createElement('input'); chk.type='checkbox'; chk.className='todo-check'; chk.checked=todo.completed; chk.addEventListener('change',()=>toggleComplete(dateKey,todo.id));
             const textSpan = document.createElement('span'); textSpan.className='todo-text'; textSpan.innerText = todo.text;
-            const rightDiv = document.createElement('div'); rightDiv.style.display='flex'; rightDiv.style.gap='6px';
+            const rightDiv = document.createElement('div'); rightDiv.style.display='flex'; rightDiv.style.gap='6px'; rightDiv.style.alignItems='center';
             if (todo.completed && todo.completedAt) {
                 const badge = document.createElement('span'); badge.className='completion-badge'; badge.innerHTML = `✅ ${new Date(todo.completedAt).toLocaleTimeString()}`;
                 rightDiv.appendChild(badge);
@@ -898,10 +895,11 @@
                 const rbadge = document.createElement('span'); rbadge.className='reminder-badge'; rbadge.innerHTML = `⏰ ${todo.remindTime.slice(5,16)}`;
                 rightDiv.appendChild(rbadge);
             }
-            const hasProgress = todo.progressLogs && todo.progressLogs.length > 0;
+            // 进展按钮：始终显示，有进展显示条数，无进展显示“添加”
             const progBtn = document.createElement('span');
             progBtn.className = 'progress-badge';
-            progBtn.innerHTML = hasProgress ? `📝 ${todo.progressLogs.length}` : `📝 添加`;
+            const progressCount = (todo.progressLogs && todo.progressLogs.length) || 0;
+            progBtn.innerHTML = progressCount > 0 ? `📝 ${progressCount}` : `📝 添加`;
             progBtn.style.cursor = 'pointer';
             progBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -917,7 +915,6 @@
         });
     }
 
-    // 渲染日历
     function renderCalendar() {
         const year = currentCalendarYear, month = currentCalendarMonth;
         const firstDay = new Date(year, month, 1);
