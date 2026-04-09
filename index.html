@@ -548,7 +548,13 @@
 </div>
 
 <script>
-    // ---------- 数据 ----------
+    // ---------- 固定存储键名 ----------
+    const STORAGE_TODOS_KEY = 'lingxi_todos_app';
+    const STORAGE_RULES_KEY = 'lingxi_rules_app';
+    // 旧版本可能使用的键名列表（用于迁移）
+    const OLD_TODOS_KEYS = ['todos_complete_v5', 'todos_complete_v6', 'todos_complete_v7', 'todos_complete_v8', 'todos_complete_v9', 'todos_complete_v10', 'todos_complete_v11'];
+    const OLD_RULES_KEYS = ['recurring_rules_v5', 'recurring_rules_v6', 'recurring_rules_v7', 'recurring_rules_v8', 'recurring_rules_v9', 'recurring_rules_v10', 'recurring_rules_v11'];
+
     let todosDB = {};
     let recurringRules = [];
     let currentSelectedDate = new Date();
@@ -570,29 +576,108 @@
     function formatDateTime(iso) { if (!iso) return ''; return new Date(iso).toLocaleString(); }
 
     function saveAll() {
-        localStorage.setItem('todos_complete_v11', JSON.stringify(todosDB));
-        localStorage.setItem('recurring_rules_v11', JSON.stringify(recurringRules));
+        localStorage.setItem(STORAGE_TODOS_KEY, JSON.stringify(todosDB));
+        localStorage.setItem(STORAGE_RULES_KEY, JSON.stringify(recurringRules));
     }
-    function loadAll() {
-        const storedTodos = localStorage.getItem('todos_complete_v11');
-        if (storedTodos) { try { todosDB = JSON.parse(storedTodos); } catch(e) {} }
-        const storedRules = localStorage.getItem('recurring_rules_v11');
-        if (storedRules) { try { recurringRules = JSON.parse(storedRules); } catch(e) {} }
-        if (!recurringRules.length) {
-            recurringRules.push({
-                id: Date.now(),
-                name: "工作打卡",
-                timeStr: "18:00",
-                daysOfWeek: [1,2,3,4,5],
-                taskText: "🏢 工作打卡 · 完成日报",
-                icon: "💼",
-                reminderWindowMin: 60,
-                reminderIntervalMin: 30,
-                lastRemindTime: null,
-                lastGenDate: ""
-            });
-            saveAll();
+
+    // 迁移旧数据
+    function migrateOldData() {
+        let mergedTodos = {};
+        let mergedRules = [];
+        // 尝试从旧键中读取数据
+        for (let oldKey of OLD_TODOS_KEYS) {
+            const oldData = localStorage.getItem(oldKey);
+            if (oldData) {
+                try {
+                    const parsed = JSON.parse(oldData);
+                    if (typeof parsed === 'object' && parsed !== null) {
+                        Object.assign(mergedTodos, parsed);
+                    }
+                } catch(e) {}
+                localStorage.removeItem(oldKey); // 清除旧数据避免重复
+            }
         }
+        for (let oldKey of OLD_RULES_KEYS) {
+            const oldData = localStorage.getItem(oldKey);
+            if (oldData) {
+                try {
+                    const parsed = JSON.parse(oldData);
+                    if (Array.isArray(parsed)) {
+                        mergedRules = mergedRules.concat(parsed);
+                    }
+                } catch(e) {}
+                localStorage.removeItem(oldKey);
+            }
+        }
+        // 去重规则（基于id）
+        const uniqueRules = [];
+        const ruleIds = new Set();
+        for (let rule of mergedRules) {
+            if (rule.id && !ruleIds.has(rule.id)) {
+                ruleIds.add(rule.id);
+                uniqueRules.push(rule);
+            }
+        }
+        if (Object.keys(mergedTodos).length > 0) {
+            todosDB = mergedTodos;
+        }
+        if (uniqueRules.length > 0) {
+            recurringRules = uniqueRules;
+        }
+        // 如果已经有新版本的数据（优先保留），则上面旧数据只是补充，不覆盖已存在的key
+        // 但为了安全，先加载新版本，再补充旧数据中不存在的条目（已在loadAll中实现）
+    }
+
+    function loadAll() {
+        // 先尝试加载新版本数据
+        const storedTodos = localStorage.getItem(STORAGE_TODOS_KEY);
+        const storedRules = localStorage.getItem(STORAGE_RULES_KEY);
+        if (storedTodos) {
+            try { todosDB = JSON.parse(storedTodos); } catch(e) {}
+        }
+        if (storedRules) {
+            try { recurringRules = JSON.parse(storedRules); } catch(e) {}
+        }
+        // 如果没有新版本数据或数据为空，尝试从旧版本迁移
+        if (Object.keys(todosDB).length === 0 && recurringRules.length === 0) {
+            migrateOldData();
+        } else {
+            // 即使有新版本，也尝试从旧版本中补充可能遗漏的数据（合并，不覆盖已有）
+            for (let oldKey of OLD_TODOS_KEYS) {
+                const oldData = localStorage.getItem(oldKey);
+                if (oldData) {
+                    try {
+                        const parsed = JSON.parse(oldData);
+                        if (typeof parsed === 'object') {
+                            for (let key in parsed) {
+                                if (!todosDB[key]) {
+                                    todosDB[key] = parsed[key];
+                                }
+                            }
+                        }
+                    } catch(e) {}
+                    localStorage.removeItem(oldKey);
+                }
+            }
+            for (let oldKey of OLD_RULES_KEYS) {
+                const oldData = localStorage.getItem(oldKey);
+                if (oldData) {
+                    try {
+                        const parsed = JSON.parse(oldData);
+                        if (Array.isArray(parsed)) {
+                            for (let rule of parsed) {
+                                if (!recurringRules.some(r => r.id === rule.id)) {
+                                    recurringRules.push(rule);
+                                }
+                            }
+                        }
+                    } catch(e) {}
+                    localStorage.removeItem(oldKey);
+                }
+            }
+        }
+
+        // 确保每个待办项有必要的字段
         for (let key in todosDB) {
             todosDB[key].forEach(t => {
                 if (!t.createdAt) t.createdAt = new Date().toISOString();
@@ -606,6 +691,8 @@
             if (r.reminderIntervalMin === undefined) r.reminderIntervalMin = 0;
             if (r.lastRemindTime === undefined) r.lastRemindTime = null;
         });
+        // 不再自动添加默认规则！保持用户现有规则，如果为空则为空。
+        saveAll(); // 确保保存合并后的数据
     }
 
     // 通知功能
@@ -956,7 +1043,6 @@
 
     function init() {
         loadAll(); initIconSelector(); const today=new Date(); currentSelectedDate=new Date(today.getFullYear(),today.getMonth(),today.getDate()); currentCalendarYear=today.getFullYear(); currentCalendarMonth=today.getMonth(); bindEvents(); refreshAll(); startBackgroundTasks(); generateRecurringTasks();
-        // 自动请求通知权限
         if (Notification.permission !== "granted" && Notification.permission !== "denied") {
             Notification.requestPermission();
         }
